@@ -22,10 +22,6 @@ let initialWasmPath: string | undefined;
 /**
  * Initialize the libavoid WASM module.
  *
- * Called automatically by {@link routeEdges}, {@link routeEdgesInPlace}, and
- * `createRoutingSession` on first use. You can call it explicitly to control
- * initialization timing or to provide a WASM URL in browser environments.
- *
  * Subsequent calls return the same promise (the `wasmPath` from the first call wins).
  * A warning is logged if a subsequent call provides a different `wasmPath`.
  *
@@ -207,16 +203,15 @@ export function validateGraph(graph: unknown): asserts graph is ElkGraph {
 	}
 }
 
-async function executeRouting(
+function executeRouting(
 	graph: ElkGraph,
 	options?: LibavoidRoutingOptions,
-): Promise<{
+): {
 	parsed: ParsedGraph;
 	rawRoutes: Map<string, ElkPoint[]>;
 	selfLoopEdges: ResolvedEdge[];
-}> {
+} {
 	validateGraph(graph);
-	await init();
 
 	const Avoid = AvoidLib.getInstance();
 	const parsed = parseElkGraph(graph);
@@ -253,18 +248,16 @@ async function executeRouting(
  * Route edges on an ELK JSON graph using libavoid.
  *
  * Returns a Map of edge ID → RouteResult. The input graph is NOT modified.
- * Automatically initializes the WASM module on first call if not already done
- * (Node.js only; in browsers, call {@link init} with a WASM URL first).
  *
  * **Coordinate system:** The returned {@link RouteResult} points use
  * **absolute** coordinates. If you need coordinates relative to the edge's
  * owner node (as in ELK JSON), use {@link routeEdgesInPlace} instead.
  */
-export async function routeEdges(
+export function routeEdges(
 	graph: ElkGraph,
 	options?: LibavoidRoutingOptions,
-): Promise<Map<string, RouteResult>> {
-	const { parsed, rawRoutes, selfLoopEdges } = await executeRouting(
+): Map<string, RouteResult> {
+	const { parsed, rawRoutes, selfLoopEdges } = executeRouting(
 		graph,
 		options,
 	);
@@ -296,11 +289,11 @@ export async function routeEdges(
  * ELK JSON convention. This differs from {@link routeEdges}, which returns
  * absolute coordinates.
  */
-export async function routeEdgesInPlace(
+export function routeEdgesInPlace(
 	graph: ElkGraph,
 	options?: LibavoidRoutingOptions,
-): Promise<ElkGraph> {
-	const { parsed, rawRoutes, selfLoopEdges } = await executeRouting(
+): ElkGraph {
+	const { parsed, rawRoutes, selfLoopEdges } = executeRouting(
 		graph,
 		options,
 	);

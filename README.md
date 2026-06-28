@@ -1,3 +1,5 @@
+This is a fork of [@mr_mint/elkjs-libavoid](https://www.npmjs.com/package/@mr_mint/elkjs-libavoid) with a synchronous interface. The original library had to make most of its methods asynchronous because it also had to initialize the WebAssembly library. This fork requires an explicit call to `init(...)` beforehand.
+
 # elkjs-libavoid
 
 [![CI](https://github.com/mrmint/elkjs-libavoid/actions/workflows/ci.yml/badge.svg)](https://github.com/mrmint/elkjs-libavoid/actions/workflows/ci.yml)

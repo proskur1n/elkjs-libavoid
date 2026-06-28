@@ -235,12 +235,11 @@ export class RoutingSession {
  * session.destroy();
  * ```
  */
-export async function createRoutingSession(
+export function createRoutingSession(
 	graph: ElkGraph,
 	options?: LibavoidRouterOptions,
-): Promise<RoutingSession> {
+): RoutingSession {
 	validateGraph(graph);
-	await init();
 
 	const Avoid = AvoidLib.getInstance();
 	const parsed = parseElkGraph(graph);
